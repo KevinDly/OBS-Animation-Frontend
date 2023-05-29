@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import "./App.css"
-import EmotePickerContainer from './components/EmotePickerContainer';
+import EmoteSourceContainer from './components/EmoteSourceContainer';
 
 const WEBSOCKET_URL = "ws://localhost:2999"
 const WEBSOCKET_PROTOCOLS = ["streamerController"]
@@ -153,7 +153,7 @@ class App extends Component {
             <input type="number" id="emoteDensityInput"></input>
             <input type="text" id="emoteURLInput" onChange = { (e) => this.updateData(e, "imageURL") }></input>
             <button type="button" id="emoteDataSubmit" onClick={ this.sendData }>Submit</button>
-            <EmotePickerContainer emoteJSONArray={this.state.emoteArray} onClickEmote = { this.sendEmoteButton }/>
+            <EmoteSourceContainer emoteJSONArray={this.state.emoteArray} onClickEmote = { this.sendEmoteButton }/>
         </div>
     }
 }
