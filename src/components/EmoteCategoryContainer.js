@@ -18,8 +18,8 @@ function EmoteCategoryContainer({emoteCategories, onClickEmote}) {
 
     return (
         <Stack sx = {{minWidth: "100%", overflowX: "hidden"}}>
-            <Paper sx = {{maxHeight: "10%", minWidth: "99%"}} variant = {"outlined"}>
-                {Object.keys(emoteCategories).map(key => <Button onClick = { () => {setCategory(key)} }> 
+            <Paper sx = {{maxHeight: "10%", minWidth: "99%"}} variant = {"outlined"} id = "source_categories_buttons">
+                { Object.keys(emoteCategories).map(key => <Button onClick = { () => {setCategory(key)} } key = {key}> 
                     { key } 
                     </Button>)}
             </Paper>

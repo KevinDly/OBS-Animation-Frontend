@@ -5,6 +5,7 @@ import '../emotepickercontainer.css'
 
 function EmotePickerContainer({emoteJSONArray, onClickEmote}) {
     //Take in a list of jsons, then iterate on each json.
+  console.log("picker")
   console.log(emoteJSONArray)
 
   return (

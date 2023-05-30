@@ -17,24 +17,25 @@ const TWITCH_CLIENT_ID = 'bmkhxh3eb8cl8uvtkwm6fbrahzgkdx'
 const emoteCategories = {
         ["Local"]: {
             data: [{imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-                imgName: "AYAYA"},
-                {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-                imgName: "AYAYA"},
-                {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-                imgName: "AYAYA"},
-                {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-                imgName: "AYAYA"}]
+                imgName: ":AYAYA"}]
         }
     }
 
 
 
 //TODO: Replace setState for emotes later
-let emoteMap = function(data) {
-    return {
+let mapEmotes = (data) => ({
         imgSrc: data.images.url_4x,
         imgName: data.name
-    }   
+    })
+
+let updateCategory = (category, source, response) => {
+    console.log(category)
+    console.log(source)
+    console.log("Updating category")
+    return {...category, 
+        [source] : {
+            data: response.data.map(emoteData => mapEmotes(emoteData))}}
 }
 
 class App extends Component {
@@ -69,13 +70,10 @@ class App extends Component {
             })
             .then(response => response.json())
             .then(response => {
-                this.setState({emoteCategories: {...this.state.emoteCategories, 
-                    ["Twitch.tv"] : {
-                        data: response.data.map(data => ({
-                            imgSrc: data.images.url_4x,
-                            imgName: data.name
-                }))}}
-            })})
+                let updatedEmoteCategory = updateCategory(this.state.emoteCategories, 'Twitch.tv', response)
+                this.setState({ emoteCategories: updatedEmoteCategory }) 
+            })
+            
             this.setState({didConnect: true})
         }
     }

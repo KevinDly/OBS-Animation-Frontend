@@ -5,36 +5,36 @@ import React, { useState } from 'react';
 
 function EmoteSourceContainer({emoteCategories, onClickEmote}) {
 
-  const [pickedEmotes, setEmotes] = useState(new Set())
+  const [pickedEmoteIDs, setEmoteIDs] = useState(new Set())
+  const [emotes, setEmotes] = useState({})
 
   let addEmote = function(imgSrc, imgName){
-    console.log(pickedEmotes.size)
-    setEmotes(prev => new Set(prev).add({
-        imgSrc: imgSrc,
-        imgName: imgName
-    }))
-    console.log(pickedEmotes)
+    if(!pickedEmoteIDs.has(imgName)) {
+      setEmoteIDs(prevSet => new Set(prevSet).add(imgName))
+      setEmotes(prevEmotes => ({...prevEmotes, [imgName]: imgSrc}))
+    }
   }
 
   let removeEmote = function(imgSrc, imgName){
-    setEmotes(prev => {
-        let newPickedEmote = new Set(prev)
-        newPickedEmote.delete({
-        imgSrc: imgSrc,
-        imgName: imgName })
-        return newPickedEmote
-    })
+    const newIDs = new Set(pickedEmoteIDs)
+    const newEmotes = {...emotes}
+
+    newIDs.delete(imgName)
+    delete newEmotes[imgName]
+
+    setEmoteIDs(() => newIDs)
+    setEmotes(() => newEmotes)
   }
 
   //TODO: Add headers for the emotepickercontainer so that it contains multiple emotes.
   return (
     <Stack sx = {{maxWidth: "75%"}}>    
-        <Paper sx = {{maxHeight: "25%", minWidth: "99%"}} variant = {"outlined"}>
-            {Array.from(pickedEmotes).map(emote => {
-                return <EmoteButton imgName={emote.imgName} imgSrc={emote.imgSrc} onClickEmote = { removeEmote }/>
+        <Paper sx = {{maxHeight: "25%", minWidth: "99%"}} variant = {"outlined"} id = "emote_pick_display">
+            {Object.keys(emotes).map(emote => {
+                return <EmoteButton imgName={emote} imgSrc={emotes[emote]} onClickEmote = { removeEmote } key = {emote + "_display"}/>
             })}
         </Paper>
-        <EmoteCategoryContainer emoteCategories={ emoteCategories } onClickEmote = { addEmote }/>
+        <EmoteCategoryContainer emoteCategories={ emoteCategories } onClickEmote = { addEmote } id = "category_container"/>
     </Stack>
   )
 }
