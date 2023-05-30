@@ -1,10 +1,9 @@
-import EmotePickerContainer from './EmotePickerContainer.js'
+import EmoteCategoryContainer from './EmoteCategoryContainer.js'
 import { Stack, Paper } from '@mui/material'
 import EmoteButton from './EmoteButton.js'
 import React, { useState } from 'react';
 
-function EmoteSourceContainer({emoteJSONArray, onClickEmote}) {
-  console.log(emoteJSONArray)
+function EmoteSourceContainer({emoteCategories, onClickEmote}) {
 
   const [pickedEmotes, setEmotes] = useState(new Set())
 
@@ -35,7 +34,7 @@ function EmoteSourceContainer({emoteJSONArray, onClickEmote}) {
                 return <EmoteButton imgName={emote.imgName} imgSrc={emote.imgSrc} onClickEmote = { removeEmote }/>
             })}
         </Paper>
-        <EmotePickerContainer emoteJSONArray={emoteJSONArray} onClickEmote = { addEmote }/>
+        <EmoteCategoryContainer emoteCategories={ emoteCategories } onClickEmote = { addEmote }/>
     </Stack>
   )
 }

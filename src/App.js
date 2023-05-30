@@ -14,16 +14,28 @@ const TWITCH_VALIDATION_URL = 'https://id.twitch.tv/oauth2/validate'
 const TWITCH_CLIENT_SECRET = 'vh3a92zgt8617h0er1ohymnrn71nlt'
 const TWITCH_CLIENT_ID = 'bmkhxh3eb8cl8uvtkwm6fbrahzgkdx'
 
-const emoteJSONArray = [
-    {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-    imgName: "AYAYA"},
-    {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-    imgName: "AYAYA"},
-    {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-    imgName: "AYAYA"},
-    {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-    imgName: "AYAYA"}
-]
+const emoteCategories = {
+        ["Local"]: {
+            data: [{imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
+                imgName: "AYAYA"},
+                {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
+                imgName: "AYAYA"},
+                {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
+                imgName: "AYAYA"},
+                {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
+                imgName: "AYAYA"}]
+        }
+    }
+
+
+
+//TODO: Replace setState for emotes later
+let emoteMap = function(data) {
+    return {
+        imgSrc: data.images.url_4x,
+        imgName: data.name
+    }   
+}
 
 class App extends Component {
 
@@ -37,19 +49,13 @@ class App extends Component {
         this.state = {
             emoteDensity: 0,
             imageURL: "",
-            emoteArray: emoteJSONArray,
+            emoteCategories: emoteCategories,
             didConnect: false,
             didAuthenticate: false
         }
     }
 
     getEmotes({access_token, expiration, token_type}) {
-        /*fetch(TWITCH_VALIDATION_URL, {
-            headers: {
-                'Authorization': 'OAuth ' + access_token
-            }
-        })*/
-
         if(this.state.didConnect) {
             console.log("Connected")
             return
@@ -63,10 +69,12 @@ class App extends Component {
             })
             .then(response => response.json())
             .then(response => {
-                this.setState({emoteArray: response.data.map(data => ({
-                    imgSrc: data.images.url_4x,
-                    imgName: data.name
-                }))
+                this.setState({emoteCategories: {...this.state.emoteCategories, 
+                    ["Twitch.tv"] : {
+                        data: response.data.map(data => ({
+                            imgSrc: data.images.url_4x,
+                            imgName: data.name
+                }))}}
             })})
             this.setState({didConnect: true})
         }
@@ -119,7 +127,6 @@ class App extends Component {
     }
 
     sendEmoteButton(src, name) {
-
         console.log(src)
         const emoteData = {
             type: DATA_SEND_TYPE,
@@ -153,7 +160,7 @@ class App extends Component {
             <input type="number" id="emoteDensityInput"></input>
             <input type="text" id="emoteURLInput" onChange = { (e) => this.updateData(e, "imageURL") }></input>
             <button type="button" id="emoteDataSubmit" onClick={ this.sendData }>Submit</button>
-            <EmoteSourceContainer emoteJSONArray={this.state.emoteArray} onClickEmote = { this.sendEmoteButton }/>
+            <EmoteSourceContainer emoteCategories={ this.state.emoteCategories } onClickEmote = { this.sendEmoteButton }/>
         </div>
     }
 }

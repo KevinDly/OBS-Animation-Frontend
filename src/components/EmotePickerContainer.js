@@ -8,7 +8,7 @@ function EmotePickerContainer({emoteJSONArray, onClickEmote}) {
   console.log(emoteJSONArray)
 
   return (
-    <Card sx = {{height: "100vh", mx: 2, mt: 1}}>
+    <Card sx = {{minWidth: "100%", height: "100vh", mx: 2, mt: 1}}>
       <div>
         {emoteJSONArray.map(emoteJSON => (
           <EmoteButton imgName={emoteJSON.imgName} imgSrc={emoteJSON.imgSrc} onClickEmote = { onClickEmote }/>
