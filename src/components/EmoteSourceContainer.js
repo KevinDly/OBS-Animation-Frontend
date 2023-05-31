@@ -1,9 +1,10 @@
 import EmoteCategoryContainer from './EmoteCategoryContainer.js'
+import PickedEmoteContainer from './PickedEmoteContainer.js'
 import { Stack, Paper } from '@mui/material'
 import EmoteButton from './EmoteButton.js'
 import React, { useState } from 'react';
 
-function EmoteSourceContainer({emoteCategories, onClickEmote}) {
+function EmoteSourceContainer({emoteCategories}) {
 
   const [pickedEmoteIDs, setEmoteIDs] = useState(new Set())
   const [emotes, setEmotes] = useState({})
@@ -29,11 +30,7 @@ function EmoteSourceContainer({emoteCategories, onClickEmote}) {
   //TODO: Add headers for the emotepickercontainer so that it contains multiple emotes.
   return (
     <Stack sx = {{maxWidth: "75%"}}>    
-        <Paper sx = {{maxHeight: "25%", minWidth: "99%"}} variant = {"outlined"} id = "emote_pick_display">
-            {Object.keys(emotes).map(emote => {
-                return <EmoteButton imgName={emote} imgSrc={emotes[emote]} onClickEmote = { removeEmote } key = {emote + "_display"}/>
-            })}
-        </Paper>
+        <PickedEmoteContainer emotes = {emotes} onRemove = { removeEmote }/>
         <EmoteCategoryContainer emoteCategories={ emoteCategories } onClickEmote = { addEmote } id = "category_container"/>
     </Stack>
   )

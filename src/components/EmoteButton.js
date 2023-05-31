@@ -10,8 +10,6 @@ function EmoteButton({imgSrc, imgName, onClickEmote}) {
         onClickEmote(imgSrc, imgName)
     }
 
-    console.log(imgSrc)
-    console.log(imgName)
     return (
         <ButtonBase sx = {{maxHeight: "200px", margin: .5}} onClick = {onClick}>
             <Card>
@@ -28,4 +26,4 @@ function EmoteButton({imgSrc, imgName, onClickEmote}) {
     );
 }
 
-export default EmoteButton;
+export default React.memo(EmoteButton);

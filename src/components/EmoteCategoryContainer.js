@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
-import EmotePickerContainer from './EmotePickerContainer'
+import React, { useState, useMemo } from 'react';
+import EmoteButtonContainer from './EmoteButtonContainer'
 import { Paper, Stack, Button } from '@mui/material';
 
 function EmoteCategoryContainer({emoteCategories, onClickEmote}) {
 
-    console.log("categories")
-    console.log(Object.keys(emoteCategories))
-    const [currentCategory, setCategories] = useState(emoteCategories[Object.keys(emoteCategories)[0]])
+    const [currentSource, setSource] = useState(Object.keys(emoteCategories)[0])
+    console.log(currentSource)
 
-    const [currentEmoteArray, setCurrentEmoteArray] = useState([])
-
-    //TODO: Implement function for clicking category button
     let setCategory = (source) => {
-        console.log(source)
-        setCategories(emoteCategories[source])
+        setSource(source)
     }
+
+    const useEffect = useMemo(() => {
+        return onClickEmote
+    }, [currentSource])
+
+    const category = useMemo(() => getCategory(emoteCategories, currentSource), [currentSource])
 
     return (
         <Stack sx = {{minWidth: "100%", overflowX: "hidden"}}>
@@ -23,9 +24,16 @@ function EmoteCategoryContainer({emoteCategories, onClickEmote}) {
                     { key } 
                     </Button>)}
             </Paper>
-            <EmotePickerContainer emoteJSONArray = { currentCategory['data'] } onClickEmote = { onClickEmote }/>
+            <EmoteButtonContainer emoteJSONArray = { category } onClickEmote = { useEffect }/>
         </Stack>
     );
+}
+
+/*Function that retrives the related jsons given a category and a dictionary of different sources*/
+function getCategory(emoteCategories, source) {
+    console.log("Current source")
+    console.log(source)
+    return emoteCategories[source].data
 }
 
 export default EmoteCategoryContainer;

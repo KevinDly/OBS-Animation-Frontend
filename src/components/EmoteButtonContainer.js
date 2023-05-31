@@ -1,13 +1,12 @@
 import React from 'react'
 import EmoteButton from './EmoteButton.js'
-import { Grid, Card } from '@mui/material'
+import { Card } from '@mui/material'
 import '../emotepickercontainer.css'
 
-function EmotePickerContainer({emoteJSONArray, onClickEmote}) {
+function EmoteButtonContainer({emoteJSONArray, onClickEmote}) {
     //Take in a list of jsons, then iterate on each json.
-  console.log("picker")
-  console.log(emoteJSONArray)
 
+  console.log("Changing button container sources.")
   return (
     <Card sx = {{minWidth: "100%", height: "100vh", mx: 2, mt: 1}}>
       <div>
@@ -19,4 +18,4 @@ function EmotePickerContainer({emoteJSONArray, onClickEmote}) {
   )
 }
 
-export default EmotePickerContainer
+export default React.memo(EmoteButtonContainer)
