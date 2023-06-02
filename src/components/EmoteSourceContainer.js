@@ -37,7 +37,7 @@ function EmoteSourceContainer({emoteCategories}) {
   return (
     <Stack sx = {{maxWidth: "75%"}}>    
         <PickedEmoteContainer emotes = { emotes } onRemove = { removeEmote }/>
-        <EmoteCategoryContainer emoteCategories={ emoteCategories } onClickEmote = { addEmoteCallback } id = "category_container"/>
+        <EmoteCategoryContainer emoteCategories = { emoteCategories } onClickEmote = { addEmoteCallback } id = "category_container"/>
     </Stack>
   )
 }

@@ -1,43 +1,22 @@
 import React, { Component } from 'react';
 import "./App.css"
 import EmoteSourceContainer from './components/EmoteSourceContainer';
+import { connectTwitch } from './apis/twitchapi'
 
 const WEBSOCKET_URL = "ws://localhost:2999"
 const WEBSOCKET_PROTOCOLS = ["streamerController"]
 const DATA_SEND_TYPE = "executeAnimation"
 
-const TWITCH_OAUTH_URL = 'https://id.twitch.tv/oauth2/token'
-const TWITCH_GLOBAL_EMOTES_URL = 'https://api.twitch.tv/helix/chat/emotes/global'
-const TWITCH_VALIDATION_URL = 'https://id.twitch.tv/oauth2/validate'
-
-//TODO: Put in a separate file.
-const TWITCH_CLIENT_SECRET = 'vh3a92zgt8617h0er1ohymnrn71nlt'
-const TWITCH_CLIENT_ID = 'bmkhxh3eb8cl8uvtkwm6fbrahzgkdx'
 
 const emoteCategories = {
-        ["Local"]: {
+        "Local": {
             data: [{imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-                imgName: ":AYAYA"}]
+                imgName: ":AYAYA",
+                id: "AYAYA_Local"}]
         }
     }
 
-
-
 //TODO: Replace setState for emotes later
-let mapEmotes = (data) => ({
-        imgSrc: data.images.url_4x,
-        imgName: data.name
-    })
-
-let updateCategory = (category, source, response) => {
-    console.log(category)
-    console.log(source)
-    console.log("Updating category")
-    return {...category, 
-        [source] : {
-            data: response.data.map(emoteData => mapEmotes(emoteData))}}
-}
-
 class App extends Component {
 
     constructor(props) {
@@ -51,57 +30,19 @@ class App extends Component {
             emoteDensity: 0,
             imageURL: "",
             emoteCategories: emoteCategories,
-            didConnect: false,
-            didAuthenticate: false
+            didConnect: {},
+            didAuthenticate: {},
+            pickedEmoteIDs: new Set(),
+            emotes: {}
         }
     }
 
     //TODO: Check if there are multiples of emotes?
-    getEmotes({access_token, expiration, token_type}) {
-        if(this.state.didConnect) {
-            console.log("Connected")
-            return
-        }
-        else {
-            fetch(TWITCH_GLOBAL_EMOTES_URL, {
-                headers: {
-                    'Authorization': 'Bearer ' + access_token,
-                    'Client-Id': TWITCH_CLIENT_ID
-                }
-            })
-            .then(response => response.json())
-            .then(response => {
-                let updatedEmoteCategory = updateCategory(this.state.emoteCategories, 'Twitch.tv', response)
-                this.setState({ emoteCategories: updatedEmoteCategory }) 
-            })
-            
-            this.setState({didConnect: true})
-        }
-    }
 
     componentDidMount(){
-        console.log("Mounted") 
+        console.log("Mounted")
 
-        if(this.state.didAuthenticate) {
-            console.log("Already authenticated")
-            return
-        }
-        fetch(TWITCH_OAUTH_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                'client_id': TWITCH_CLIENT_ID,
-                'client_secret': TWITCH_CLIENT_SECRET,
-                'grant_type': 'client_credentials'
-            })
-        })
-        .then(response => response.json())
-        .then(response => {
-            this.getEmotes(response)
-            this.setState({didAuthenticate: true})
-        })
+        connectTwitch(this, "Twitch.tv")
     }
 
     sendData() {
@@ -155,11 +96,29 @@ class App extends Component {
     //TODO: Prevent jsonarray from reupdating every time something else on the page updates.
 
     render() {
+        /*const addEmoteCallback = useCallback((imgSrc, imgName) => {
+            if(!pickedEmoteIDs.has(imgName)) {
+                this.setState({pickedEmoteIDs: new Set(prevSet).add(imgName)})
+                this.setState({emotes: {...prevEmotes, [imgName]: imgSrc}})
+            }
+        }, [pickedEmoteIDs])
+            
+        const removeEmote = function(imgSrc, imgName){
+            const newIDs = new Set(this.state.pickedEmoteIDs)
+            const newEmotes = {...this.state.emotes}
+            
+            newIDs.delete(imgName)
+            delete newEmotes[imgName]
+            
+            this.setState({pickedEmoteIDs: newIDs})
+            this.setState({emotes: newEmotes})
+        }*/
+                
         return <div id = "page_div">
             <input type="number" id="emoteDensityInput"></input>
             <input type="text" id="emoteURLInput" onChange = { (e) => this.updateData(e, "imageURL") }></input>
             <button type="button" id="emoteDataSubmit" onClick={ this.sendData }>Submit</button>
-            <EmoteSourceContainer emoteCategories={ this.state.emoteCategories } onClickEmote = { this.sendEmoteButton }/>
+            <EmoteSourceContainer emoteCategories={ this.state.emoteCategories }/>
         </div>
     }
 }
