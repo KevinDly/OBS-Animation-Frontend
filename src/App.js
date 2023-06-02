@@ -25,6 +25,8 @@ class App extends Component {
         this.sendData = this.sendData.bind(this)
         this.updateData = this.updateData.bind(this)
         this.sendEmoteButton = this.sendEmoteButton.bind(this)
+        this.addEmote = this.addEmote.bind(this)
+        this.removeEmote = this.removeEmote.bind(this)
 
         this.state = {
             emoteDensity: 0,
@@ -33,7 +35,7 @@ class App extends Component {
             didConnect: {},
             didAuthenticate: {},
             pickedEmoteIDs: new Set(),
-            emotes: {}
+            pickedEmotes: {}
         }
     }
 
@@ -95,30 +97,31 @@ class App extends Component {
 
     //TODO: Prevent jsonarray from reupdating every time something else on the page updates.
 
+    addEmote(imgSrc, imgName) {
+        if(!this.state.pickedEmoteIDs.has(imgName)) {
+            this.setState({pickedEmoteIDs: new Set(this.state.pickedEmoteIDs).add(imgName)})
+            this.setState({pickedEmotes: {...this.state.pickedEmotes, [imgName]: imgSrc}})
+        }
+    }
+    
+    removeEmote(imgSrc, imgName) {
+        const newIDs = new Set(this.state.pickedEmoteIDs)
+        const newEmotes = {...this.state.pickedEmotes}
+        
+        newIDs.delete(imgName)
+        delete newEmotes[imgName]
+        
+        this.setState({pickedEmoteIDs: newIDs})
+        this.setState({pickedEmotes: newEmotes})
+    }
+
     render() {
-        /*const addEmoteCallback = useCallback((imgSrc, imgName) => {
-            if(!pickedEmoteIDs.has(imgName)) {
-                this.setState({pickedEmoteIDs: new Set(prevSet).add(imgName)})
-                this.setState({emotes: {...prevEmotes, [imgName]: imgSrc}})
-            }
-        }, [pickedEmoteIDs])
-            
-        const removeEmote = function(imgSrc, imgName){
-            const newIDs = new Set(this.state.pickedEmoteIDs)
-            const newEmotes = {...this.state.emotes}
-            
-            newIDs.delete(imgName)
-            delete newEmotes[imgName]
-            
-            this.setState({pickedEmoteIDs: newIDs})
-            this.setState({emotes: newEmotes})
-        }*/
-                
+
         return <div id = "page_div">
             <input type="number" id="emoteDensityInput"></input>
             <input type="text" id="emoteURLInput" onChange = { (e) => this.updateData(e, "imageURL") }></input>
             <button type="button" id="emoteDataSubmit" onClick={ this.sendData }>Submit</button>
-            <EmoteSourceContainer emoteCategories={ this.state.emoteCategories }/>
+            <EmoteSourceContainer emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
         </div>
     }
 }
