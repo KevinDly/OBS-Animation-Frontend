@@ -11,11 +11,18 @@ function EmoteCategoryContainer({emoteCategories, onClickEmote}) {
         setSource(source)
     }
 
-    const useEffect = useMemo(() => {
-        return onClickEmote
-    }, [currentSource])
+    //TODO: Figure out why this is still updating constantly when the PickedEmoteContainer is updated.
+    const onClick = useMemo(() => {
+        return onClickEmote}, 
+        [onClickEmote])
 
-    const category = useMemo(() => getCategory(emoteCategories, currentSource), [currentSource])
+    const category = useMemo(() => 
+        getCategory(emoteCategories, currentSource), 
+        [emoteCategories, currentSource])
+
+    /*const getEmoteContainer = useMemo(() => {
+        return (<EmoteButtonContainer emoteJSONArray = { getCategory(emoteCategories, currentSource) } onClickEmote = { onClickEmote } source = { currentSource }/>)},
+        [currentSource, emoteCategories, onClickEmote])*/
 
     return (
         <Stack sx = {{minWidth: "100%", overflowX: "hidden"}}>
@@ -24,7 +31,7 @@ function EmoteCategoryContainer({emoteCategories, onClickEmote}) {
                     { key } 
                     </Button>)}
             </Paper>
-            <EmoteButtonContainer emoteJSONArray = { category } onClickEmote = { useEffect }/>
+            <EmoteButtonContainer emoteJSONArray = { category } onClickEmote = { onClick } source = { currentSource }/>
         </Stack>
     );
 }

@@ -8,7 +8,9 @@ function PickedEmoteContainer({emotes, onRemove}) {
   return ( 
     <Paper sx = {{maxHeight: "25%", minWidth: "99%"}} variant = {"outlined"} id = "emote_pick_display">
         {Object.keys(emotes).map(emote => {
-            return <EmoteButton imgName={emote} imgSrc={emotes[emote]} onClickEmote = { onRemove } key = {emote + "_display"}/>
+            return <span display = "inline-block" key = {emote + "_picked"}>
+              <EmoteButton imgName={emote} imgSrc={emotes[emote]} onClickEmote = { onRemove } key = {emote + "_display"}/>
+            </span>
         })}
     </Paper>
   )

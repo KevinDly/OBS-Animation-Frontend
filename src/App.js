@@ -56,6 +56,7 @@ class App extends Component {
         }
     }
 
+    //TODO: Check if there are multiples of emotes?
     getEmotes({access_token, expiration, token_type}) {
         if(this.state.didConnect) {
             console.log("Connected")
