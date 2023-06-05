@@ -29,7 +29,6 @@ class App extends Component {
         this.removeEmote = this.removeEmote.bind(this)
 
         this.state = {
-            emoteDensity: 0,
             imageURL: "",
             emoteCategories: emoteCategories,
             didConnect: {},
@@ -48,6 +47,42 @@ class App extends Component {
     }
 
     sendData() {
+        const pickedEmotes = this.state.pickedEmotes
+        const emoteDensity = document.getElementById("emoteDensityInput").value
+        const pickedEmoteKeys = Object.keys(pickedEmotes)
+
+        if(pickedEmoteKeys.length === 0) {
+            console.log("No emotes picked!")
+            return
+        }
+
+        if(emoteDensity <= 0) {
+            console.log("Positive number of emotes required.")
+            return
+        }
+
+        const emoteURLs = pickedEmoteKeys.map(key => pickedEmotes[key])
+        const emoteData = {
+            type: DATA_SEND_TYPE,
+            data: { 
+                emotes: emoteURLs,
+                emoteDensity: emoteDensity
+            }
+        }
+
+        console.log(emoteData)
+        try{
+            console.log(this.websocket)
+            const stringifiedData = JSON.stringify(emoteData)
+            console.log(stringifiedData)
+            this.websocket.send(stringifiedData)
+        }
+        catch(error) {
+            console.log(error)
+        }
+    }
+
+    sendDataOld() {
         const emoteData = {
             type: DATA_SEND_TYPE,
             data: {
