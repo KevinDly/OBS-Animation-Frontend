@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import "./App.css"
 import EmoteSourceContainer from './components/EmoteSourceContainer';
-import { connectTwitch } from './apis/twitchapi'
+import { updateEmoteCategories } from './utils/emoteCategoryUtils.js'
 
 const WEBSOCKET_URL = "ws://localhost:2999"
 const WEBSOCKET_PROTOCOLS = ["streamerController"]
@@ -42,8 +42,20 @@ class App extends Component {
 
     componentDidMount(){
         console.log("Mounted")
-
-        connectTwitch(this, "Twitch.tv")
+        //connectTwitch(this, "Twitch.tv")
+        this.websocket.onmessage = (event) => {
+            const msg = JSON.parse(event.data)
+            const data = msg.data
+            const type = msg.type
+            console.log("Recieved Message")
+            console.log(msg)
+            switch(type) {
+                case "recievedEmotes":
+                    Object.keys(msg.data).forEach((key) => {
+                        updateEmoteCategories(this, key, data[key])
+                    })
+            }
+        }
     }
 
     sendData() {
@@ -67,27 +79,6 @@ class App extends Component {
             data: { 
                 emotes: emoteURLs,
                 emoteDensity: emoteDensity
-            }
-        }
-
-        console.log(emoteData)
-        try{
-            console.log(this.websocket)
-            const stringifiedData = JSON.stringify(emoteData)
-            console.log(stringifiedData)
-            this.websocket.send(stringifiedData)
-        }
-        catch(error) {
-            console.log(error)
-        }
-    }
-
-    sendDataOld() {
-        const emoteData = {
-            type: DATA_SEND_TYPE,
-            data: {
-                url: this.state.imageURL,
-                emoteDensity: this.state.emoteDensity
             }
         }
 
