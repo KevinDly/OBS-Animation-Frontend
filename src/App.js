@@ -27,6 +27,7 @@ class App extends Component {
         this.sendEmoteButton = this.sendEmoteButton.bind(this)
         this.addEmote = this.addEmote.bind(this)
         this.removeEmote = this.removeEmote.bind(this)
+        this.enableSound = this.enableSound.bind(this)
 
         this.state = {
             imageURL: "",
@@ -34,7 +35,8 @@ class App extends Component {
             didConnect: {},
             didAuthenticate: {},
             pickedEmoteIDs: new Set(),
-            pickedEmotes: {}
+            pickedEmotes: {},
+            soundEnabled: false
         }
     }
 
@@ -54,6 +56,9 @@ class App extends Component {
                     Object.keys(msg.data).forEach((key) => {
                         updateEmoteCategories(this, key, data[key])
                     })
+                    break
+                default:
+                    break
             }
         }
     }
@@ -62,6 +67,9 @@ class App extends Component {
         const pickedEmotes = this.state.pickedEmotes
         const emoteDensity = document.getElementById("emoteDensityInput").value
         const pickedEmoteKeys = Object.keys(pickedEmotes)
+        const soundEnabled = this.state.soundEnabled
+
+        console.log("soundEnabled: " + soundEnabled)
 
         if(pickedEmoteKeys.length === 0) {
             console.log("No emotes picked!")
@@ -78,7 +86,8 @@ class App extends Component {
             type: DATA_SEND_TYPE,
             data: { 
                 emotes: emoteURLs,
-                emoteDensity: emoteDensity
+                emoteDensity: emoteDensity,
+                soundEnabled: soundEnabled
             }
         }
 
@@ -121,6 +130,11 @@ class App extends Component {
         this.setState({[type]: e.target.value})
     }
 
+    enableSound() {
+        const previousState = !this.state.soundEnabled
+        this.setState({soundEnabled: previousState})
+    }
+
     //TODO: Prevent jsonarray from reupdating every time something else on the page updates.
 
     addEmote(imgSrc, imgName) {
@@ -147,6 +161,8 @@ class App extends Component {
             <input type="number" id="emoteDensityInput"></input>
             <input type="text" id="emoteURLInput" onChange = { (e) => this.updateData(e, "imageURL") }></input>
             <button type="button" id="emoteDataSubmit" onClick={ this.sendData }>Submit</button>
+            <input type="checkbox" id="audioCheckbox" name="audioCheckbox" onClick={ this.enableSound }/>
+            <label htmlFor="audioCheckbox">Enable Sound</label>
             <EmoteSourceContainer emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
         </div>
     }
