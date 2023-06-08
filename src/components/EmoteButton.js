@@ -10,22 +10,13 @@ function EmoteButton({imgSrc, imgName, onClickEmote}) {
         onClickEmote(imgSrc, imgName)
     }
 
-    console.log(imgSrc)
-    console.log(imgName)
     return (
-        <ButtonBase sx = {{maxHeight: "200px", margin: .5}} onClick = {onClick}>
+        <ButtonBase sx = {{ maxWidth: "56px", margin: .5}} onClick = {onClick} onHover>
             <Card>
-                <Grid>
-                    <Box height = "60%" m = {2} mb = {2}>
-                        <img alt = "" src = { imgSrc } className = "buttonImage" width = "100px" height = "100px"></img>
-                    </Box>
-                    <Box height = "40%" mt = {1} mb = {2}>
-                        <Typography> {imgName} </Typography>
-                    </Box>
-                </Grid>
+                <img alt = "" src = { imgSrc } maxheight = "56px" width = "100%" className = "buttonImage"></img>
             </Card>
         </ButtonBase>
     );
 }
 
-export default EmoteButton;
+export default React.memo(EmoteButton);

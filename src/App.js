@@ -1,108 +1,100 @@
 import React, { Component } from 'react';
 import "./App.css"
-import EmotePickerContainer from './components/EmotePickerContainer';
+import EmoteSourceContainer from './components/EmoteSourceContainer';
+import { updateCategories } from './utils/emoteCategoryUtils.js'
 
 const WEBSOCKET_URL = "ws://localhost:2999"
 const WEBSOCKET_PROTOCOLS = ["streamerController"]
 const DATA_SEND_TYPE = "executeAnimation"
 
-const TWITCH_OAUTH_URL = 'https://id.twitch.tv/oauth2/token'
-const TWITCH_GLOBAL_EMOTES_URL = 'https://api.twitch.tv/helix/chat/emotes/global'
-const TWITCH_VALIDATION_URL = 'https://id.twitch.tv/oauth2/validate'
 
-//TODO: Put in a separate file.
-const TWITCH_CLIENT_SECRET = 'vh3a92zgt8617h0er1ohymnrn71nlt'
-const TWITCH_CLIENT_ID = 'bmkhxh3eb8cl8uvtkwm6fbrahzgkdx'
-
-const emoteJSONArray = [
-    {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-    imgName: "AYAYA"},
-    {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-    imgName: "AYAYA"},
-    {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-    imgName: "AYAYA"},
-    {imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-    imgName: "AYAYA"}
-]
+const emoteCategories = {
+        "Built-In": {
+            data: [{imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
+                imgName: "AYAYA",
+                id: "AYAYA_Local"}]
+        }
+    }
 
 class App extends Component {
 
     constructor(props) {
         super(props)
         this.websocket = new WebSocket(WEBSOCKET_URL, WEBSOCKET_PROTOCOLS)
+        
         this.sendData = this.sendData.bind(this)
-        this.updateData = this.updateData.bind(this)
+        this.updateData = this.filterEmotes.bind(this)
         this.sendEmoteButton = this.sendEmoteButton.bind(this)
+        this.addEmote = this.addEmote.bind(this)
+        this.removeEmote = this.removeEmote.bind(this)
+        this.enableSound = this.enableSound.bind(this)
+        this.clearEmotes = this.clearEmotes.bind(this)
 
         this.state = {
-            emoteDensity: 0,
             imageURL: "",
-            emoteArray: emoteJSONArray,
-            didConnect: false,
-            didAuthenticate: false
+            emoteCategories: emoteCategories,
+            didConnect: {},
+            didAuthenticate: {},
+            pickedEmoteIDs: new Set(),
+            pickedEmotes: {},
+            soundEnabled: false,
         }
     }
 
-    getEmotes({access_token, expiration, token_type}) {
-        /*fetch(TWITCH_VALIDATION_URL, {
-            headers: {
-                'Authorization': 'OAuth ' + access_token
-            }
-        })*/
+    //TODO: Check if there are multiples of emotes?
 
-        if(this.state.didConnect) {
-            console.log("Connected")
-            return
-        }
-        else {
-            fetch(TWITCH_GLOBAL_EMOTES_URL, {
-                headers: {
-                    'Authorization': 'Bearer ' + access_token,
-                    'Client-Id': TWITCH_CLIENT_ID
-                }
-            })
-            .then(response => response.json())
-            .then(response => {
-                this.setState({emoteArray: response.data.map(data => ({
-                    imgSrc: data.images.url_4x,
-                    imgName: data.name
-                }))
-            })})
-            this.setState({didConnect: true})
-        }
-    }
 
     componentDidMount(){
-        console.log("Mounted") 
-
-        if(this.state.didAuthenticate) {
-            console.log("Already authenticated")
-            return
+        console.log("Mounted")
+        //connectTwitch(this, "Twitch.tv")
+        this.websocket.onmessage = (event) => {
+            const msg = JSON.parse(event.data)
+            const data = msg.data
+            const type = msg.type
+            console.log("Recieved Message")
+            console.log(msg)
+            switch(type) {
+                case "recievedEmotes":
+                    console.log(data)
+                    try {
+                        const updatedCategories = updateCategories(this.state.emoteCategories, data)
+                        this.setState({ emoteCategories: updatedCategories })
+                    }
+                    catch(error) {
+                        console.log(error)
+                    }
+                    break
+                default:
+                    break
+            }
         }
-        fetch(TWITCH_OAUTH_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                'client_id': TWITCH_CLIENT_ID,
-                'client_secret': TWITCH_CLIENT_SECRET,
-                'grant_type': 'client_credentials'
-            })
-        })
-        .then(response => response.json())
-        .then(response => {
-            this.getEmotes(response)
-            this.setState({didAuthenticate: true})
-        })
     }
 
     sendData() {
+        const pickedEmotes = this.state.pickedEmotes
+        const emoteDensity = document.getElementById("emoteDensityInput").value
+        const pickedEmoteKeys = Object.keys(pickedEmotes)
+        const soundEnabled = this.state.soundEnabled
+
+        console.log("soundEnabled: " + soundEnabled)
+
+        if(pickedEmoteKeys.length === 0) {
+            console.log("No emotes picked!")
+            return
+        }
+
+        if(emoteDensity <= 0) {
+            console.log("Positive number of emotes required.")
+            return
+        }
+
+        const emoteURLs = pickedEmoteKeys.map(key => pickedEmotes[key])
         const emoteData = {
             type: DATA_SEND_TYPE,
-            data: {
-                url: this.state.imageURL,
-                emoteDensity: this.state.emoteDensity
+            data: { 
+                emotes: emoteURLs,
+                emoteDensity: emoteDensity,
+                soundEnabled: soundEnabled
             }
         }
 
@@ -114,12 +106,12 @@ class App extends Component {
             this.websocket.send(stringifiedData)
         }
         catch(error) {
+            console.log("Error occurred.")
             console.log(error)
         }
     }
 
     sendEmoteButton(src, name) {
-
         console.log(src)
         const emoteData = {
             type: DATA_SEND_TYPE,
@@ -141,19 +133,51 @@ class App extends Component {
         }
     }
 
-    updateData(e, type) {
-        console.log(e.target.value)
-        this.setState({[type]: e.target.value})
+    filterEmotes(e) {
+        this.setState({filter: e.target.value})
+    }
+
+    enableSound() {
+        const previousState = !this.state.soundEnabled
+        this.setState({soundEnabled: previousState})
     }
 
     //TODO: Prevent jsonarray from reupdating every time something else on the page updates.
 
+    addEmote(imgSrc, imgName) {
+        if(!this.state.pickedEmoteIDs.has(imgName)) {
+            this.setState({pickedEmoteIDs: new Set(this.state.pickedEmoteIDs).add(imgName)})
+            this.setState({pickedEmotes: {...this.state.pickedEmotes, [imgName]: imgSrc}})
+        }
+    }
+    
+    removeEmote(imgSrc, imgName) {
+        const newIDs = new Set(this.state.pickedEmoteIDs)
+        const newEmotes = {...this.state.pickedEmotes}
+        
+        newIDs.delete(imgName)
+        delete newEmotes[imgName]
+        
+        this.setState({pickedEmoteIDs: newIDs})
+        this.setState({pickedEmotes: newEmotes})
+    }
+
+    clearEmotes(){
+        const clearedSet = new Set()
+        const clearedEmotes = {}
+        this.setState({pickedEmoteIDs: clearedSet})
+        this.setState({pickedEmotes: clearedEmotes})
+    }
+
     render() {
+
         return <div id = "page_div">
             <input type="number" id="emoteDensityInput"></input>
-            <input type="text" id="emoteURLInput" onChange = { (e) => this.updateData(e, "imageURL") }></input>
             <button type="button" id="emoteDataSubmit" onClick={ this.sendData }>Submit</button>
-            <EmotePickerContainer emoteJSONArray={this.state.emoteArray} onClickEmote = { this.sendEmoteButton }/>
+            <button type="button" id="emoteDataSubmit" onClick={ this.clearEmotes }>Clear Emotes</button>
+            <input type="checkbox" id="audioCheckbox" name="audioCheckbox" onClick={ this.enableSound }/>
+            <label htmlFor="audioCheckbox">Enable Sound</label>
+            <EmoteSourceContainer emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
         </div>
     }
 }
