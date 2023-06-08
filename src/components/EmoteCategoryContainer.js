@@ -2,8 +2,10 @@ import React, { useState, useMemo } from 'react';
 import EmoteButtonContainer from './EmoteButtonContainer'
 import { Paper, Stack, Button } from '@mui/material';
 
-function EmoteCategoryContainer({emoteCategories, onClickEmote}) {
+function EmoteCategoryContainer({emoteCategories, onClickEmote, filter}) {
 
+    console.log("updated filter")
+    console.log(filter)
     const [currentSource, setSource] = useState(Object.keys(emoteCategories)[0])
     console.log(currentSource)
 
@@ -31,7 +33,7 @@ function EmoteCategoryContainer({emoteCategories, onClickEmote}) {
                     { key } 
                     </Button>)}
             </Paper>
-            <EmoteButtonContainer emoteJSONArray = { category } onClickEmote = { onClick } source = { currentSource }/>
+            <EmoteButtonContainer emoteJSONArray = { category } onClickEmote = { onClick } source = { currentSource } filter = { filter }/>
         </Stack>
     );
 }
