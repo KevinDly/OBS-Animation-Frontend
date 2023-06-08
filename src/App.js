@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import "./App.css"
 import EmoteSourceContainer from './components/EmoteSourceContainer';
-import { updateEmoteCategories } from './utils/emoteCategoryUtils.js'
+import { updateCategories } from './utils/emoteCategoryUtils.js'
 
 const WEBSOCKET_URL = "ws://localhost:2999"
 const WEBSOCKET_PROTOCOLS = ["streamerController"]
@@ -9,26 +9,26 @@ const DATA_SEND_TYPE = "executeAnimation"
 
 
 const emoteCategories = {
-        "Local": {
+        "Built-In": {
             data: [{imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
                 imgName: ":AYAYA",
                 id: "AYAYA_Local"}]
         }
     }
 
-//TODO: Replace setState for emotes later
 class App extends Component {
 
     constructor(props) {
         super(props)
         this.websocket = new WebSocket(WEBSOCKET_URL, WEBSOCKET_PROTOCOLS)
+        
         this.sendData = this.sendData.bind(this)
         this.updateData = this.updateData.bind(this)
         this.sendEmoteButton = this.sendEmoteButton.bind(this)
         this.addEmote = this.addEmote.bind(this)
         this.removeEmote = this.removeEmote.bind(this)
         this.enableSound = this.enableSound.bind(this)
-
+        this.clearEmotes = this.clearEmotes.bind(this)
         this.state = {
             imageURL: "",
             emoteCategories: emoteCategories,
@@ -42,6 +42,7 @@ class App extends Component {
 
     //TODO: Check if there are multiples of emotes?
 
+
     componentDidMount(){
         console.log("Mounted")
         //connectTwitch(this, "Twitch.tv")
@@ -53,9 +54,14 @@ class App extends Component {
             console.log(msg)
             switch(type) {
                 case "recievedEmotes":
-                    Object.keys(msg.data).forEach((key) => {
-                        updateEmoteCategories(this, key, data[key])
-                    })
+                    console.log(data)
+                    try {
+                        const updatedCategories = updateCategories(this.state.emoteCategories, data)
+                        this.setState({ emoteCategories: updatedCategories })
+                    }
+                    catch(error) {
+                        console.log(error)
+                    }
                     break
                 default:
                     break
@@ -99,6 +105,7 @@ class App extends Component {
             this.websocket.send(stringifiedData)
         }
         catch(error) {
+            console.log("Error occurred.")
             console.log(error)
         }
     }
@@ -155,12 +162,20 @@ class App extends Component {
         this.setState({pickedEmotes: newEmotes})
     }
 
+    clearEmotes(){
+        const clearedSet = new Set()
+        const clearedEmotes = {}
+        this.setState({pickedEmoteIDs: clearedSet})
+        this.setState({pickedEmotes: clearedEmotes})
+    }
+
     render() {
 
         return <div id = "page_div">
             <input type="number" id="emoteDensityInput"></input>
             <input type="text" id="emoteURLInput" onChange = { (e) => this.updateData(e, "imageURL") }></input>
             <button type="button" id="emoteDataSubmit" onClick={ this.sendData }>Submit</button>
+            <button type="button" id="emoteDataSubmit" onClick={ this.clearEmotes }>Clear Emotes</button>
             <input type="checkbox" id="audioCheckbox" name="audioCheckbox" onClick={ this.enableSound }/>
             <label htmlFor="audioCheckbox">Enable Sound</label>
             <EmoteSourceContainer emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
