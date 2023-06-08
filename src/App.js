@@ -11,7 +11,7 @@ const DATA_SEND_TYPE = "executeAnimation"
 const emoteCategories = {
         "Built-In": {
             data: [{imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-                imgName: ":AYAYA",
+                imgName: "AYAYA",
                 id: "AYAYA_Local"}]
         }
     }
@@ -23,12 +23,13 @@ class App extends Component {
         this.websocket = new WebSocket(WEBSOCKET_URL, WEBSOCKET_PROTOCOLS)
         
         this.sendData = this.sendData.bind(this)
-        this.updateData = this.updateData.bind(this)
+        this.updateData = this.filterEmotes.bind(this)
         this.sendEmoteButton = this.sendEmoteButton.bind(this)
         this.addEmote = this.addEmote.bind(this)
         this.removeEmote = this.removeEmote.bind(this)
         this.enableSound = this.enableSound.bind(this)
         this.clearEmotes = this.clearEmotes.bind(this)
+
         this.state = {
             imageURL: "",
             emoteCategories: emoteCategories,
@@ -36,7 +37,7 @@ class App extends Component {
             didAuthenticate: {},
             pickedEmoteIDs: new Set(),
             pickedEmotes: {},
-            soundEnabled: false
+            soundEnabled: false,
         }
     }
 
@@ -132,9 +133,8 @@ class App extends Component {
         }
     }
 
-    updateData(e, type) {
-        console.log(e.target.value)
-        this.setState({[type]: e.target.value})
+    filterEmotes(e) {
+        this.setState({filter: e.target.value})
     }
 
     enableSound() {
@@ -173,7 +173,6 @@ class App extends Component {
 
         return <div id = "page_div">
             <input type="number" id="emoteDensityInput"></input>
-            <input type="text" id="emoteURLInput" onChange = { (e) => this.updateData(e, "imageURL") }></input>
             <button type="button" id="emoteDataSubmit" onClick={ this.sendData }>Submit</button>
             <button type="button" id="emoteDataSubmit" onClick={ this.clearEmotes }>Clear Emotes</button>
             <input type="checkbox" id="audioCheckbox" name="audioCheckbox" onClick={ this.enableSound }/>
