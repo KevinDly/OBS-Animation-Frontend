@@ -14,7 +14,7 @@ function EmoteSourceContainer({emoteCategories, emotes, addEmote, removeEmote}) 
 
   //TODO: Updating spacing on filter input.
   return (
-    <div>
+    <div id = "sourceDiv">
       <label htmlFor="emoteFilter"> Filter Emotes </label>
       <input type="text" id="emoteFilter" onChange = { (e) => updateFilter(e) }></input>
       <Stack sx = {{maxWidth: "75%"}}>    

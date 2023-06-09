@@ -12,7 +12,10 @@ const emoteCategories = {
         "Built-In": {
             data: [{imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
                 imgName: "AYAYA",
-                id: "AYAYA_Local"}]
+                id: "AYAYA_Local"},
+                {imgSrc: "https://cdn.discordapp.com/emojis/725112963823960184.webp?size=96&quality=lossless",
+                imgName: "SAIYAYA",
+                id: "SAIYAYA_Local"}]
         }
     }
 
@@ -177,7 +180,7 @@ class App extends Component {
             <button type="button" id="emoteDataSubmit" onClick={ this.clearEmotes }>Clear Emotes</button>
             <input type="checkbox" id="audioCheckbox" name="audioCheckbox" onClick={ this.enableSound }/>
             <label htmlFor="audioCheckbox">Enable Sound</label>
-            <EmoteSourceContainer emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
+            <EmoteSourceContainer overflow = "hidden" emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
         </div>
     }
 }
