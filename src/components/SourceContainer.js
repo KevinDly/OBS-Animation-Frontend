@@ -1,9 +1,9 @@
-import EmoteCategoryContainer from './EmoteCategoryContainer.js'
-import PickedEmoteContainer from './PickedEmoteContainer.js'
+import DataContainer from './DataContainer.js'
+import PickedEmoteContainer from './emotes/PickedEmoteContainer.js'
 import { Stack } from '@mui/material'
 import React, { useState } from 'react';
 
-function EmoteSourceContainer({emoteCategories, emotes, addEmote, removeEmote}) {
+function SourceContainer({emoteCategories, emotes, addEmote, removeEmote}) {
   
   const [filter, setFilter] = useState("")
 
@@ -19,10 +19,10 @@ function EmoteSourceContainer({emoteCategories, emotes, addEmote, removeEmote}) 
       <input type="text" id="emoteFilter" onChange = { (e) => updateFilter(e) }></input>
       <Stack sx = {{maxWidth: "75%"}}>    
           <PickedEmoteContainer emotes = { emotes } onRemove = { removeEmote }/>
-          <EmoteCategoryContainer emoteCategories = { emoteCategories } onClickEmote = { addEmote } filter = { filter } id = "category_container"/>
+          <DataContainer emoteCategories = { emoteCategories } onClickEmote = { addEmote } filter = { filter } id = "data_container"/>
       </Stack>
     </div>
   )
 }
 
-export default EmoteSourceContainer
+export default SourceContainer

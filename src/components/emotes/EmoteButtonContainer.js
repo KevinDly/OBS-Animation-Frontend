@@ -1,14 +1,14 @@
 import React from 'react'
 import EmoteButton from './EmoteButton.js'
 import { Card } from '@mui/material'
-import '../emotepickercontainer.css'
+import '../../emotepickercontainer.css'
 
 function EmoteButtonContainer( props ) {
     //Take in a list of jsons, then iterate on each json.
 
   console.log("Changing button container sources.")
   return (
-    <Card sx = {{minWidth: "100%", height: "100vh", mx: 2, mt: 1}}>
+    <Card sx = {{minWidth: "100%", height: "100vh", mx: 2, mt: 1, overflowY: "auto"}}>
       <div>
         {props.emoteJSONArray.filter(emoteJSON => emoteJSON.imgName.toLowerCase().includes(props.filter.toLowerCase())).map(emoteJSON => (
           <span>

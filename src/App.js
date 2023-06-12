@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import "./App.css"
-import EmoteSourceContainer from './components/EmoteSourceContainer';
 import { updateCategories } from './utils/emoteCategoryUtils.js'
-
+import SourceContainer from './components/SourceContainer.js'
 const WEBSOCKET_URL = "ws://localhost:2999"
 const WEBSOCKET_PROTOCOLS = ["streamerController"]
 const DATA_SEND_TYPE = "executeAnimation"
-
 
 const emoteCategories = {
         "Built-In": {
@@ -180,7 +178,7 @@ class App extends Component {
             <button type="button" id="emoteDataSubmit" onClick={ this.clearEmotes }>Clear Emotes</button>
             <input type="checkbox" id="audioCheckbox" name="audioCheckbox" onClick={ this.enableSound }/>
             <label htmlFor="audioCheckbox">Enable Sound</label>
-            <EmoteSourceContainer overflow = "hidden" emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
+            <SourceContainer emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
         </div>
     }
 }

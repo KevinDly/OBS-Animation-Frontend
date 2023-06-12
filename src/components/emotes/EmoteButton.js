@@ -1,7 +1,5 @@
 import React from 'react';
-import { ButtonBase, Card, Typography } from '@mui/material';
-import { Grid } from '@mui/material';
-import { Box } from '@mui/material';
+import { ButtonBase, Card } from '@mui/material';
 
 function EmoteButton({imgSrc, imgName, onClickEmote}) {
 

@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import EmoteButtonContainer from './EmoteButtonContainer'
+import EmoteButtonContainer from './emotes/EmoteButtonContainer'
 import { Paper, Stack, Button } from '@mui/material';
 
-function EmoteCategoryContainer({emoteCategories, onClickEmote, filter}) {
+function CategoryContainer({emoteCategories, onClickEmote, filter}) {
 
     console.log("updated filter")
     console.log(filter)
@@ -45,4 +45,4 @@ function getCategory(emoteCategories, source) {
     return emoteCategories[source].data
 }
 
-export default EmoteCategoryContainer;
+export default CategoryContainer;
