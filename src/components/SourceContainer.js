@@ -3,7 +3,7 @@ import PickedEmoteContainer from './emotes/PickedEmoteContainer.js'
 import { Box, Stack } from '@mui/material'
 import React, { useState } from 'react';
 
-function SourceContainer({emoteCategories, emotes, addEmote, removeEmote}) {
+function SourceContainer({sounds, emoteCategories, emotes, addEmote, removeEmote}) {
   
   const [filter, setFilter] = useState("")
 
@@ -22,7 +22,7 @@ function SourceContainer({emoteCategories, emotes, addEmote, removeEmote}) {
         <Stack spacing = {1}>
           <PickedEmoteContainer emotes = { emotes } onRemove = { removeEmote }/>
           <Box sx = {{height: "80%", minWidth: "100%"}}>
-            <DataContainer emoteCategories = { emoteCategories } onClickEmote = { addEmote } filter = { filter } id = "data_container"/>
+            <DataContainer sounds = { sounds } emoteCategories = { emoteCategories } onClickEmote = { addEmote } filter = { filter } id = "data_container"/>
           </Box>
         </Stack>
     </Box>

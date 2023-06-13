@@ -19,6 +19,15 @@ const emoteCategories = {
         }
     }
 
+const sounds = [
+    {
+        soundID: "AYAYA_Sound",
+        soundURL: "https://cdn.discordapp.com/attachments/319692273556258816/1116040911575588914/AYAYA_AYAYA_-_Sound_Effect_HD.mp3",
+        soundName: "AYAYA",
+        soundImage: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f"
+    }
+]
+
 class App extends Component {
 
     constructor(props) {
@@ -41,6 +50,7 @@ class App extends Component {
             pickedEmoteIDs: new Set(),
             pickedEmotes: {},
             soundEnabled: false,
+            sounds: sounds
         }
     }
 
@@ -180,7 +190,7 @@ class App extends Component {
             <button type="button" id="emoteDataSubmit" onClick={ this.clearEmotes }>Clear Emotes</button>
             <input type="checkbox" id="audioCheckbox" name="audioCheckbox" onClick={ this.enableSound }/>
             <label htmlFor="audioCheckbox">Enable Sound</label>
-            <SourceContainer emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
+            <SourceContainer sounds = { this.state.sounds } emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
         </div>
     }
 }
