@@ -1,6 +1,6 @@
 import DataContainer from './DataContainer.js'
 import PickedEmoteContainer from './emotes/PickedEmoteContainer.js'
-import { Stack } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import React, { useState } from 'react';
 
 function SourceContainer({emoteCategories, emotes, addEmote, removeEmote}) {
@@ -14,14 +14,18 @@ function SourceContainer({emoteCategories, emotes, addEmote, removeEmote}) {
 
   //TODO: Updating spacing on filter input.
   return (
-    <div id = "sourceDiv">
-      <label htmlFor="emoteFilter"> Filter Emotes </label>
-      <input type="text" id="emoteFilter" onChange = { (e) => updateFilter(e) }></input>
-      <Stack sx = {{maxWidth: "75%"}}>    
+    <Box id = "sourceDiv" sx = {{maxWidth: "75%"}}>
+        <Box sx = {{height: "fit-content"}}>
+          <label htmlFor="emoteFilter"> Filter Emotes </label>
+          <input type="text" id="emoteFilter" onChange = { (e) => updateFilter(e) }></input>
+        </Box>
+        <Stack spacing = {1}>
           <PickedEmoteContainer emotes = { emotes } onRemove = { removeEmote }/>
-          <DataContainer emoteCategories = { emoteCategories } onClickEmote = { addEmote } filter = { filter } id = "data_container"/>
-      </Stack>
-    </div>
+          <Box sx = {{height: "80%", minWidth: "100%"}}>
+            <DataContainer emoteCategories = { emoteCategories } onClickEmote = { addEmote } filter = { filter } id = "data_container"/>
+          </Box>
+        </Stack>
+    </Box>
   )
 }
 

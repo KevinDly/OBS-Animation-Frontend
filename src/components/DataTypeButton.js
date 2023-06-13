@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 
 function DataTypeButton(props) {
     return (
-        <Button>Placeholder</Button>
+        <Button>{props.name}</Button>
     )
 }
 

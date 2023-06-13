@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import "./App.css"
 import { updateCategories } from './utils/emoteCategoryUtils.js'
 import SourceContainer from './components/SourceContainer.js'
+import { Stack
+ } from '@mui/material';
 const WEBSOCKET_URL = "ws://localhost:2999"
 const WEBSOCKET_PROTOCOLS = ["streamerController"]
 const DATA_SEND_TYPE = "executeAnimation"

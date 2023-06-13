@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import EmoteButtonContainer from './emotes/EmoteButtonContainer'
-import { Paper, Stack, Button } from '@mui/material';
+import { Box, Stack, Button } from '@mui/material';
 
 function CategoryContainer({emoteCategories, onClickEmote, filter}) {
 
@@ -27,12 +27,12 @@ function CategoryContainer({emoteCategories, onClickEmote, filter}) {
         [currentSource, emoteCategories, onClickEmote])*/
 
     return (
-        <Stack sx = {{minWidth: "100%", overflowX: "hidden"}}>
-            <Paper sx = {{maxHeight: "10%", minWidth: "99%"}} variant = {"outlined"} id = "source_categories_buttons">
+        <Stack>
+            <Box sx = {{maxHeight: "10%", width: "100%", border: "1px dashed gray"}} variant = {"outlined"} id = "source_categories_buttons">
                 { Object.keys(emoteCategories).map(key => <Button onClick = { () => {setCategory(key)} } key = {key}> 
                     { key } 
                     </Button>)}
-            </Paper>
+            </Box>
             <EmoteButtonContainer emoteJSONArray = { category } onClickEmote = { onClick } source = { currentSource } filter = { filter }/>
         </Stack>
     );
