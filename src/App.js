@@ -37,20 +37,39 @@ class App extends Component {
         this.sendData = this.sendData.bind(this)
         this.updateData = this.filterEmotes.bind(this)
         this.sendEmoteButton = this.sendEmoteButton.bind(this)
-        this.addEmote = this.addEmote.bind(this)
-        this.removeEmote = this.removeEmote.bind(this)
+        this.addData = this.addData.bind(this)
+        this.removeData = this.removeData.bind(this)
         this.enableSound = this.enableSound.bind(this)
         this.clearEmotes = this.clearEmotes.bind(this)
 
         this.state = {
-            imageURL: "",
-            emoteCategories: emoteCategories,
             didConnect: {},
             didAuthenticate: {},
+
+            emoteCategories: emoteCategories,
             pickedEmoteIDs: new Set(),
             pickedEmotes: {},
+
             soundEnabled: false,
-            sounds: sounds
+            sounds: sounds,
+            pickedSoundIDs: new Set(),
+            pickedSounds: {},
+
+            picked: {
+                "emote": {
+                    pickedIDs: new Set(),
+                    pickedData: {},
+                },
+                "sound": {
+                    pickedIDs: new Set(),
+                    pickedData: {}
+                }
+            }
+        }
+
+        this.stateRelation = {
+            "emote": [this.state.pickedEmoteIDs, this.state.pickedEmotes],
+            "sound": [this.state.pickedSoundIDs, this.state.pickedEmotes]
         }
     }
 
@@ -155,24 +174,41 @@ class App extends Component {
         this.setState({soundEnabled: previousState})
     }
 
-    //TODO: Prevent jsonarray from reupdating every time something else on the page updates.
+    addData(data, buttonSource) {
+        console.log("Adding data")
+        const currentPickedSource = this.state.picked[buttonSource]
 
-    addEmote(imgSrc, imgName) {
-        if(!this.state.pickedEmoteIDs.has(imgName)) {
-            this.setState({pickedEmoteIDs: new Set(this.state.pickedEmoteIDs).add(imgName)})
-            this.setState({pickedEmotes: {...this.state.pickedEmotes, [imgName]: imgSrc}})
+        //Check if the ID has already been added.
+        if(!currentPickedSource.pickedIDs.has(data.name)) {
+            console.log("Data was not currently added.")
+            const updatedPicked = {...this.state.picked}
+            const updatedSource = updatedPicked[buttonSource]
+
+            updatedSource.pickedIDs.add(data.name)
+            updatedSource[data.name] = data
+
+            console.log(updatedPicked)
+            this.setState({picked: updatedPicked})
         }
     }
     
-    removeEmote(imgSrc, imgName) {
-        const newIDs = new Set(this.state.pickedEmoteIDs)
-        const newEmotes = {...this.state.pickedEmotes}
-        
-        newIDs.delete(imgName)
-        delete newEmotes[imgName]
-        
-        this.setState({pickedEmoteIDs: newIDs})
-        this.setState({pickedEmotes: newEmotes})
+    removeData(data, buttonSource) {
+        console.log("Removing data")
+
+        const currentPickedSource = this.state.picked[buttonSource]
+        const updatedIDs = new Set(currentPickedSource.pickedIDs)
+        const updatedData = {...currentPickedSource.pickedData}
+
+        updatedIDs.delete(data.name)
+        delete updatedData[data.name]
+
+        let updatedPicked = {...this.state.picked}
+        updatedPicked[buttonSource] = {
+            pickedIDs: updatedIDs,
+            pickedData: updatedData
+        }
+
+        this.setState({picked: updatedPicked})
     }
 
     clearEmotes(){
@@ -190,7 +226,7 @@ class App extends Component {
             <button type="button" id="emoteDataSubmit" onClick={ this.clearEmotes }>Clear Emotes</button>
             <input type="checkbox" id="audioCheckbox" name="audioCheckbox" onClick={ this.enableSound }/>
             <label htmlFor="audioCheckbox">Enable Sound</label>
-            <SourceContainer sounds = { this.state.sounds } emoteCategories={ this.state.emoteCategories } emotes = { this.state.pickedEmotes } addEmote = { this.addEmote } removeEmote = { this.removeEmote }/>
+            <SourceContainer sounds = { this.state.sounds } emoteCategories={ this.state.emoteCategories } emotes = { this.state.picked["emote"].pickedData } addData = { this.addData } removeData = { this.removeData }/>
         </div>
     }
 }

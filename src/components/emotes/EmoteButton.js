@@ -5,7 +5,12 @@ function EmoteButton({imgSrc, imgName, onClickEmote}) {
 
     let onClick = () => {
         console.log("Sending data!")
-        onClickEmote(imgSrc, imgName)
+        onClickEmote({
+            display: imgSrc,
+            src: imgSrc,
+            name: imgName
+        },
+        "emote")
     }
 
     return (

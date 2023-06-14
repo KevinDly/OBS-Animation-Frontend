@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import CategoryContainer from './CategoryContainer.js';
 import { Stack, Box } from '@mui/material';
 import DataTypeButton from './DataTypeButton.js';
-import EmoteButton from './emotes/EmoteButton.js';
+import SoundButton from './sounds/SoundButton.js';
 
 function DataContainer(props) {
 
@@ -10,8 +10,8 @@ function DataContainer(props) {
 
     let dataComponents = {
         "Emotes": <CategoryContainer emoteCategories = { props.emoteCategories } onClickEmote = { props.onClickEmote } filter = { props.filter }/>,
-        "Sounds": <Box> {props.sounds.map((data) => (
-            <EmoteButton imgSrc = {data.soundImage} imgName = {data.soundName} onClickEmote={() => {}}/>
+        "Sounds": <Box> {props.sounds.filter(data => data.soundName.toLowerCase().includes(props.filter)).map((data) => (
+            <SoundButton data = {data}/>
         ))} </Box>
     }
 
@@ -22,13 +22,13 @@ function DataContainer(props) {
     }
 
     return (
-        <Stack sx = {{minWidth: "100%"}} spacing = {1} direction = "row">
-            <Box sx = {{minWidth: "10%", border: "1px blue dashed", overflowY: "auto", overflowX: "hidden"}}>
+        <Stack spacing = {1} direction = "row" id = "data_row_stack">
+            <Box sx = {{boxSizing: "border-box", width: "10%", height: "100%", border: "1px blue dashed", overflowY: "auto", overflowX: "hidden"}}>
                 { Object.keys(dataComponents).map((name) => (
-                    <DataTypeButton name = {name} onClick = {changeDataSet}/>
+                        <DataTypeButton name = {name} onClick = {changeDataSet}/>
                 ))}
             </Box>
-            <Box sx = {{minWidth: "90%"}}>
+            <Box sx = {{width: "90%"}}>
                 { dataComponents[currentData] }
             </Box>
         </Stack>
