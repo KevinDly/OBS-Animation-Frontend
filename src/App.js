@@ -15,16 +15,28 @@ const emoteCategories = {
                 id: "AYAYA_Local"},
                 {imgSrc: "https://cdn.discordapp.com/emojis/725112963823960184.webp?size=96&quality=lossless",
                 imgName: "SAIYAYA",
-                id: "SAIYAYA_Local"}]
+                id: "SAIYAYA_Local"},]
         }
     }
 
 const sounds = [
     {
-        soundID: "AYAYA_Sound",
-        soundURL: "https://cdn.discordapp.com/attachments/319692273556258816/1116040911575588914/AYAYA_AYAYA_-_Sound_Effect_HD.mp3",
-        soundName: "AYAYA",
-        soundImage: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f"
+        id: "AYAYA_Sound",
+        src: "https://cdn.discordapp.com/attachments/319692273556258816/1116040911575588914/AYAYA_AYAYA_-_Sound_Effect_HD.mp3",
+        name: "AYAYA",
+        display: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f"
+    },
+    {
+        id: "AYAYA_Sound2",
+        src: "https://cdn.discordapp.com/attachments/319692273556258816/1116040911575588914/AYAYA_AYAYA_-_Sound_Effect_HD.mp3",
+        name: "AYAYA2",
+        display: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f"
+    },
+    {
+        id: "AYAYA_Sound3",
+        src: "https://cdn.discordapp.com/attachments/319692273556258816/1116040911575588914/AYAYA_AYAYA_-_Sound_Effect_HD.mp3",
+        name: "AYAYA3",
+        display: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f"
     }
 ]
 
@@ -65,11 +77,6 @@ class App extends Component {
                     pickedData: {}
                 }
             }
-        }
-
-        this.stateRelation = {
-            "emote": [this.state.pickedEmoteIDs, this.state.pickedEmotes],
-            "sound": [this.state.pickedSoundIDs, this.state.pickedEmotes]
         }
     }
 
@@ -179,13 +186,14 @@ class App extends Component {
         const currentPickedSource = this.state.picked[buttonSource]
 
         //Check if the ID has already been added.
+        console.log(data.name)
         if(!currentPickedSource.pickedIDs.has(data.name)) {
             console.log("Data was not currently added.")
             const updatedPicked = {...this.state.picked}
             const updatedSource = updatedPicked[buttonSource]
 
             updatedSource.pickedIDs.add(data.name)
-            updatedSource[data.name] = data
+            updatedSource.pickedData[data.name] = data
 
             console.log(updatedPicked)
             this.setState({picked: updatedPicked})
@@ -226,7 +234,9 @@ class App extends Component {
             <button type="button" id="emoteDataSubmit" onClick={ this.clearEmotes }>Clear Emotes</button>
             <input type="checkbox" id="audioCheckbox" name="audioCheckbox" onClick={ this.enableSound }/>
             <label htmlFor="audioCheckbox">Enable Sound</label>
-            <SourceContainer sounds = { this.state.sounds } emoteCategories={ this.state.emoteCategories } emotes = { this.state.picked["emote"].pickedData } addData = { this.addData } removeData = { this.removeData }/>
+            <SourceContainer sounds = { this.state.sounds } emoteCategories={ this.state.emoteCategories } 
+                pickedSounds = { this.state.picked["sound"].pickedData } pickedEmotes = { this.state.picked["emote"].pickedData } 
+                addData = { this.addData } removeData = { this.removeData }/>
         </div>
     }
 }

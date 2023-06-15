@@ -8,7 +8,7 @@ function EmoteButtonContainer( props ) {
 
   console.log("Changing button container sources.")
   return (
-    <Card sx = {{ width: "100%", height: "100vh", mx: 2, mt: 1, overflowY: "auto"}}>
+    <Card sx = {{ width: "100%", mx: 2, mt: 1, overflowY: "auto"}}>
       <div>
         {props.emoteJSONArray.filter(emoteJSON => emoteJSON.imgName.toLowerCase().includes(props.filter)).map(emoteJSON => (
           <span>
