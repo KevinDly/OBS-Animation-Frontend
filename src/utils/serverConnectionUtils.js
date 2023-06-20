@@ -18,8 +18,18 @@ export function connectWebsocket(component, callback) {
                 console.log(data)
                 console.log(component)
                 try {
-                    const updatedCategories = updateCategories(component.state.emoteCategories, data)
+                    //TODO: Move to own function?
+                    const updatedCategories = updateCategories(component.state.emoteCategories, data['emotes'])
+                    console.log("Updating data")
+                    console.log(data['sounds'])
+                    
+                    //TODO: Make it so that this doesnt add twice in strict mode.
+                    const updatedSounds = [...component.state.sounds]
+                    data['sounds'].forEach(document => {
+                        updatedSounds.push(document)
+                    })
                     component.setState({ emoteCategories: updatedCategories })
+                    component.setState({ sounds: updatedSounds })
                 }
                 catch(error) {
                     console.log(error)
