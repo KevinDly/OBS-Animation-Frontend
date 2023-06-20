@@ -1,72 +1,13 @@
 import React, { Component } from 'react';
 import "./App.css"
-import { updateCategories } from './utils/emoteCategoryUtils.js'
+import { emoteCategories, sounds } from './constants/localCategoryData';
 import SourceContainer from './components/SourceContainer.js'
 import { Checkbox } from '@mui/material';
+import { connectWebsocket } from './utils/serverConnectionUtils';
 
 const DATA_SEND_TYPE = "executeAnimation"
-const WEBSOCKET_URL = "ws://localhost:2999"
-const WEBSOCKET_PROTOCOLS = ["streamerController"]
-const WEBSOCKET_RECONNECT_TIMEOUT = 5000
-
-const emoteCategories = {
-        "Built-In": {
-            data: [{imgSrc: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f",
-                imgName: "AYAYA",
-                id: "AYAYA_Local"},
-                {imgSrc: "https://cdn.discordapp.com/emojis/725112963823960184.webp?size=96&quality=lossless",
-                imgName: "SAIYAYA",
-                id: "SAIYAYA_Local"},]
-        }
-    }
-
-const sounds = [
-    {
-        id: "AYAYA_Sound",
-        src: "https://cdn.discordapp.com/attachments/319692273556258816/1116040911575588914/AYAYA_AYAYA_-_Sound_Effect_HD.mp3",
-        name: "AYAYA",
-        display: "https://i.kym-cdn.com/photos/images/original/001/923/849/90f"
-    },
-    {
-        id: "SVAROG_Sound",
-        src: "https://cdn.discordapp.com/attachments/211664172037963776/1119006578763382804/help-me-mr.svarog-by-voicemod.mp3",
-        name: "SVAROG",
-        display: "https://progameguides.com/wp-content/uploads/2023/04/Honkai_Star_Rail_Clara_1.jpg?fit=900%2C506"
-    },
-]
 
 let websocket;
-
-//Function that manages websocket connection and related events.
-function connectWebsocket(component) {
-    websocket = new WebSocket(WEBSOCKET_URL, WEBSOCKET_PROTOCOLS)
-
-    websocket.onmessage = (event) => {
-        const msg = JSON.parse(event.data)
-        const data = msg.data
-        const type = msg.type
-        console.log("Recieved Message")
-        console.log(msg)
-        switch(type) {
-            case "recievedEmotes":
-                console.log(data)
-                try {
-                    const updatedCategories = updateCategories(component.state.emoteCategories, data)
-                    component.setState({ emoteCategories: updatedCategories })
-                }
-                catch(error) {
-                    console.log(error)
-                }
-                break
-            default:
-                break
-        }
-    }
-
-    websocket.onclose = () => {
-        setTimeout(() => connectWebsocket(component), WEBSOCKET_RECONNECT_TIMEOUT)
-    }
-}
 
 class App extends Component {
 
@@ -99,7 +40,9 @@ class App extends Component {
 
     componentDidMount(){
         console.log("Mounted")
-        connectWebsocket(this)
+        connectWebsocket(this, (createdWebsocket) => {
+            websocket = createdWebsocket
+        })
     }
 
     sendData() {
