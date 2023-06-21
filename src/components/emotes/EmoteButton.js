@@ -14,7 +14,7 @@ function EmoteButton({imgSrc, imgName, onClickEmote}) {
     }
 
     return (
-        <ButtonBase sx = {{ maxWidth: "56px", margin: .5}} onClick = {onClick} onHover>
+        <ButtonBase sx = {{ maxWidth: "56px", margin: .5}} onClick = {onClick}>
             <Card>
                 <img alt = "" src = { imgSrc } maxheight = "56px" width = "100%" className = "buttonImage"></img>
             </Card>
