@@ -6,6 +6,9 @@ import { Checkbox } from '@mui/material';
 import { connectWebsocket } from './utils/serverConnectionUtils';
 
 const DATA_SEND_TYPE = "executeAnimation"
+const TWITCH_AUTH_TYPE = "twitchAuthData"
+const APP_CLIENT_ID = "bmkhxh3eb8cl8uvtkwm6fbrahzgkdx"
+const TWITCH_RETURN_PARAMS_CODE = "code"
 
 let websocket;
 
@@ -39,9 +42,47 @@ class App extends Component {
     }
 
     componentDidMount(){
-        console.log("Mounted")
+        const windowUrl = window.location.search;
+        const params = new URLSearchParams(windowUrl);
+        const paramsDict = {}
+
+        for (const key of params.keys()) {
+            paramsDict[key] = params.get(key)
+        }
+
         connectWebsocket(this, (createdWebsocket) => {
             websocket = createdWebsocket
+
+            //Repeatidly check if websocket is fully open.
+            const waitForOpen = (openCallback) => {
+                if(websocket.readyState === websocket.OPEN) {
+                    openCallback()
+                }
+                else {
+                    if(websocket.readyState === websocket.CONNECTING)
+                        setTimeout(() => waitForOpen(openCallback), 5)
+                }
+            }
+
+            //Callback for after the socket is connected.
+            const afterOpen = () => {
+                console.log("Opened!")
+                if(!(TWITCH_RETURN_PARAMS_CODE in paramsDict))
+                    return
+
+                let twitchAuthData = {
+                    type: TWITCH_AUTH_TYPE,
+                    data: paramsDict
+                }
+
+                websocket.send(JSON.stringify(twitchAuthData))
+            }
+
+            //Check if the socket was in a non-opening or opened state.
+            //TODO: Check if there is actually a bug here when Server is closed and Reopened?
+            if(!(websocket.readyState > websocket.OPEN)) {
+                waitForOpen(() => { afterOpen() })
+            }
         })
     }
 
@@ -148,12 +189,25 @@ class App extends Component {
 
     render() {
 
+        const twitchScopes = ["channel:read:redemptions", "channel:manage:redemptions"]
+        let urlEncodedScopes = ""
+        twitchScopes.forEach((scope, index) => {
+            urlEncodedScopes = urlEncodedScopes.concat(encodeURIComponent(scope))
+            if(index !== twitchScopes.length - 1) urlEncodedScopes = urlEncodedScopes + "+"
+        })
+        let formHref = "https://id.twitch.tv/oauth2/authorize?" +
+        `response_type=code` +
+        `&client_id=${APP_CLIENT_ID}` +
+        `&redirect_uri=http://localhost:3000/` +
+        `&scope=${urlEncodedScopes}`
+        console.log(formHref)
         return <div id = "page_div">
             <input type="number" id="emoteDensityInput"></input>
             <button type="button" id="emoteDataSubmit" onClick={ this.sendData }>Submit</button>
             <button type="button" id="emoteDataSubmit" onClick={ this.clearEmotes }>Clear Emotes</button>
             <Checkbox label = "Enable Sound" id = "audioCheckbox" name="audioCheckbox"/>
-            <label htmlFor="audioCheckbox">Enable Sound</label>
+            <label htmlFor="audioCheckbox">Enable Sound </label>
+            <a href={formHref}>Connect with Twitch</a>
             <SourceContainer sounds = { this.state.sounds } emoteCategories={ this.state.emoteCategories } 
                 pickedSounds = { this.state.picked["sound"].pickedData } pickedEmotes = { this.state.picked["emote"].pickedData } 
                 addData = { this.addData } removeData = { this.removeData }/>
