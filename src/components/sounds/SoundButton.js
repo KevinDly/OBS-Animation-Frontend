@@ -36,7 +36,7 @@ function SoundButton(props) {
     }
 
     return (
-        <ButtonBase sx = {{ maxWidth: "56px", margin: .5}} onClick = {onClick} onContextMenu = {onRightClick} onHover id = {props.data.id}>
+        <ButtonBase sx = {{ maxWidth: "56px", margin: .5}} onClick = {onClick} onContextMenu = {onRightClick} id = {props.data.id}>
             <Card>
                 <img alt = "" src = { props.data.display } maxheight = "56px" width = "100%" className = "buttonImage">
                 </img>

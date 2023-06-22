@@ -11,7 +11,7 @@ function DataContainer(props) {
     let dataComponents = {
         "Emotes": <CategoryContainer emoteCategories = { props.emoteCategories } onClickEmote = { props.onClick } filter = { props.filter }/>,
         "Sounds": <Box> {props.sounds.filter(data => data.name.toLowerCase().includes(props.filter)).map((data) => (
-            <SoundButton data = {data} onClick = {props.onClick}/>
+            <SoundButton data = {data} onClick = {props.onClick} key = { data.id }/>
         ))} </Box>
     }
 
@@ -25,7 +25,7 @@ function DataContainer(props) {
         <Stack spacing = {1} height = "100%" direction = "row" id = "data_row_stack">
             <Box sx = {{boxSizing: "border-box", width: "10%", height: "100%", border: "1px blue dashed", overflowY: "auto", overflowX: "hidden"}}>
                 { Object.keys(dataComponents).map((name) => (
-                        <DataTypeButton name = {name} onClick = {changeDataSet}/>
+                        <DataTypeButton name = { name } onClick = { changeDataSet } key = { name } />
                 ))}
             </Box>
             <Box sx = {{width: "90%", maxHeight: "100%"}}>
