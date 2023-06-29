@@ -15,7 +15,7 @@ export function connectWebsocket(component, callback) {
         console.log(msg)
         switch(type) {
             //TODO: Change event call since we send more than emotes now.
-            case "recievedEmotes":
+            case "receivedEmotes":
                 console.log(data)
                 console.log(component)
                 try {

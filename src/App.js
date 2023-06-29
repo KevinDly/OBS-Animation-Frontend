@@ -7,6 +7,7 @@ import { connectWebsocket } from './utils/serverConnectionUtils';
 
 const DATA_SEND_TYPE = "executeAnimation"
 const TWITCH_AUTH_TYPE = "twitchAuthData"
+const TWITCH_DEV_AUTH_TYPE = "twitchDevAuthData"
 const APP_CLIENT_ID = "bmkhxh3eb8cl8uvtkwm6fbrahzgkdx"
 const TWITCH_RETURN_PARAMS_CODE = "code"
 
@@ -23,6 +24,7 @@ class App extends Component {
         this.addData = this.addData.bind(this)
         this.removeData = this.removeData.bind(this)
         this.clearEmotes = this.clearEmotes.bind(this)
+        this.onDevClick = this.onDevClick.bind(this)
 
         this.state = {
             emoteCategories: emoteCategories,
@@ -75,6 +77,8 @@ class App extends Component {
                     data: paramsDict
                 }
 
+                console.log("Authdata")
+                console.log(twitchAuthData)
                 websocket.send(JSON.stringify(twitchAuthData))
             }
 
@@ -125,9 +129,7 @@ class App extends Component {
 
         console.log(sentData)
         try{
-            console.log(websocket)
             console.log("Sending data")
-            console.log(sentData)
             const stringifiedData = JSON.stringify(sentData)
             console.log(stringifiedData)
             websocket.send(stringifiedData)
@@ -187,6 +189,28 @@ class App extends Component {
         this.setState({pickedEmotes: clearedEmotes})
     }
 
+    onDevClick() {
+        console.log("Sending mock data")
+        const parameterValue = document.getElementById("devUserTwitchID").value
+        if(parameterValue === '') {
+            console.log("No userid entered")
+            return
+        }
+        console.log(parameterValue)
+        const paramsDict = {
+            id: parameterValue,
+            scope: "channel:read:redemptions"
+        }
+        let twitchAuthData = {
+            type: TWITCH_DEV_AUTH_TYPE,
+            data: paramsDict
+        }
+
+        console.log("Authdata")
+        console.log(twitchAuthData)
+        websocket.send(JSON.stringify(twitchAuthData))
+    }
+
     render() {
 
         const twitchScopes = ["channel:read:redemptions", "channel:manage:redemptions"]
@@ -200,14 +224,22 @@ class App extends Component {
         `&client_id=${APP_CLIENT_ID}` +
         `&redirect_uri=http://localhost:3000/` +
         `&scope=${urlEncodedScopes}`
+        const checkDev = process.env.NODE_ENV === 'development'
         console.log(formHref)
+        console.log("Current environment: " + process.env.NODE_ENV)
         return <div id = "page_div">
+            {
+                checkDev && <h1>You are in developer mode.</h1>
+            }
             <input type="number" id="emoteDensityInput"></input>
-            <button type="button" id="emoteDataSubmit" onClick={ this.sendData }>Submit</button>
-            <button type="button" id="emoteDataSubmit" onClick={ this.clearEmotes }>Clear Emotes</button>
+            <button type="button" id="emoteDataSend" onClick={ this.sendData }>Submit</button>
+            <button type="button" id="emoteDataClear" onClick={ this.clearEmotes }>Clear Emotes</button>
             <Checkbox label = "Enable Sound" id = "audioCheckbox" name="audioCheckbox"/>
             <label htmlFor="audioCheckbox">Enable Sound </label>
-            <a href={formHref}>Connect with Twitch</a>
+            {
+                checkDev ? <span> <input type="text" id="devUserTwitchID"></input> <button type="button" id = "devTestAuthButton" onClick={ this.onDevClick }>Send Test</button></span> : 
+                <a href={formHref}>Connect with Twitch</a>
+            }
             <SourceContainer sounds = { this.state.sounds } emoteCategories={ this.state.emoteCategories } 
                 pickedSounds = { this.state.picked["sound"].pickedData } pickedEmotes = { this.state.picked["emote"].pickedData } 
                 addData = { this.addData } removeData = { this.removeData }/>
