@@ -199,7 +199,8 @@ class App extends Component {
         console.log(parameterValue)
         const paramsDict = {
             id: parameterValue,
-            scope: "channel:read:redemptions"
+            scope: "user:read:subscriptions",
+            dev: true
         }
         let twitchAuthData = {
             type: TWITCH_DEV_AUTH_TYPE,
